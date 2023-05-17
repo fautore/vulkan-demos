@@ -1,0 +1,5 @@
+.old
+
+# remove compiled files
+vulkan-app
+shaders/*.svp
