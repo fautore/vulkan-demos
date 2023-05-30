@@ -2,4 +2,4 @@
 
 # remove compiled files
 vulkan-app
-shaders/*.svp
+shaders/*.spv

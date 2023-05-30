@@ -1,8 +1,29 @@
-CFLAGS = -std=c++17 -O2
-LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
+CFLAGS = -std=c++17 -I. -I$(VULKAN_SDK_PATH)/include
+LDFLAGS = -L$(VULKAN_SDK_PATH)/lib `pkg-config --static --libs glfw3` -lvulkan
 
-vulkan-app: *.cpp *.hpp
-	g++ $(CFLAGS) -o vulkan-app *.cpp $(LDFLAGS)
+TARGET = vulkan-app
+
+# directory paths
+source_dir = src
+shaders_dir = shaders
+
+# make executable
+$(TARGET): $(source_dir)/*.cpp $(source_dir)/*.hpp %.spv 
+	g++ $(CFLAGS) -o $(TARGET) $(source_dir)/*.cpp $(LDFLAGS)
+
+# define shaders variables
+glslc = /usr/bin/glslc
+# create list of all spv files and set as dependency
+vertSources = $(shell find ./shaders -type f -name "*.vert")
+vertObjFiles = $(patsubst %.vert, %.vert.spv, $(vertSources))
+fragSources = $(shell find ./shaders -type f -name "*.frag")
+fragObjFiles = $(patsubst %.frag, %.frag.spv, $(fragSources))
+# compile shaders
+%.spv: $(shaders_dir)/*.vert $(shaders_dir)/*.frag	
+	echo "compiling vert shaders..."
+	echo $(vertSources)
+	$(glslc) $(vertSources) -o$(vertObjFiles)
+	$(glslc) $(fragSources) -o$(fragObjFiles)
 
 .PHONY: test clean
 
@@ -10,4 +31,5 @@ test: vulkan-app
 	./vulkan-app
 
 clean:
-	rm -f vulkan-app
+	rm -f a.out
+	rm -f *.spv
