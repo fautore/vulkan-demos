@@ -24,18 +24,24 @@ class FirstApp {
 public:
   static constexpr int WIDTH = 800;
   static constexpr int HEIGHT = 600;
+  static constexpr int mode = 0;
   int sierpinskyDepth;
 
   FirstApp() {
     std::cout << "Welcome to hellotriangle !" << '\n';
-    std::cout
-        << "currently in sierpinskyMode... please select triangle depth: ";
-    std::string strdepth = "";
-    std::cin >> strdepth;
-    int depth{std::stoi(strdepth)};
-    this->sierpinskyDepth = depth;
-    std::cout << "Depth is set to: " << this->sierpinskyDepth << '\n';
-    loadModels(this->sierpinskyDepth);
+    if (this->mode == 0) {
+      std::cout << "Currently in normal mode" << '\n';
+      loadModels(0);
+    } else if (this->mode == 1) {
+      std::cout
+          << "currently in sierpinskyMode... please select triangle depth: ";
+      std::string strdepth = "";
+      std::cin >> strdepth;
+      int depth{std::stoi(strdepth)};
+      this->sierpinskyDepth = depth;
+      std::cout << "Depth is set to: " << this->sierpinskyDepth << '\n';
+      loadModels(this->sierpinskyDepth);
+    }
     createPipelineLayout();
     createPipeline();
     createCommandBuffers();
@@ -122,8 +128,9 @@ private:
 
   void loadModels(int depth = 0) {
     std::cout << "Depth iniziale: " << depth << '\n';
-    std::vector<LveModel::Vertex> vertices{
-        {{0, -1.0f}}, {{-1.0f, 1.0f}}, {{1.0f, 1.0f}}};
+    std::vector<LveModel::Vertex> vertices{{{0, -1.0f}, {1.0f, 0.0f, 0.0f}},
+                                           {{-1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}},
+                                           {{1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}}};
 
     vertices = makeSierpinski(vertices, depth);
 
