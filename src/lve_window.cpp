@@ -36,18 +36,33 @@ public:
     }
   }
 
+  bool wasWindowResized() { return frameBufferResized; }
+  void resetWindowResizedFlag() { frameBufferResized = false; }
+
 private:
   void initWindow() {
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
     window =
         glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+    glfwSetWindowUserPointer(window, this);
+    glfwSetFramebufferSizeCallback(window, frameBufferResizedCallback);
+  }
+  static void frameBufferResizedCallback(GLFWwindow *window, int width,
+                                         int height) {
+    auto lveWindow =
+        reinterpret_cast<LveWindow *>(glfwGetWindowUserPointer(window));
+    lveWindow->frameBufferResized = true;
+    lveWindow->width = width;
+    lveWindow->height = height;
   }
 
-  const int width;
-  const int height;
+  int width;
+  int height;
+  bool frameBufferResized = false;
+
   std::string windowName;
 
   GLFWwindow *window;

@@ -6,6 +6,7 @@
 #include <cstring>
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <set>
 #include <stdexcept>
 #include <vulkan/vulkan_core.h>
@@ -14,6 +15,17 @@ namespace lve {
 
 LveSwapChain::LveSwapChain(LveDevice &deviceRef, VkExtent2D extent)
     : device{deviceRef}, windowExtent{extent} {
+  init();
+}
+
+LveSwapChain::LveSwapChain(LveDevice &deviceRef, VkExtent2D extent,
+                           std::shared_ptr<LveSwapChain> previous)
+    : device{deviceRef}, windowExtent{extent}, oldSwapChain{previous} {
+  init();
+
+  oldSwapChain = nullptr;
+}
+void LveSwapChain::init() {
   createSwapChain();
   createImageViews();
   createRenderPass();
@@ -162,7 +174,8 @@ void LveSwapChain::createSwapChain() {
   createInfo.presentMode = presentMode;
   createInfo.clipped = VK_TRUE;
 
-  createInfo.oldSwapchain = VK_NULL_HANDLE;
+  createInfo.oldSwapchain =
+      oldSwapChain == nullptr ? VK_NULL_HANDLE : oldSwapChain->swapChain;
 
   if (vkCreateSwapchainKHR(device.device(), &createInfo, nullptr, &swapChain) !=
       VK_SUCCESS) {
