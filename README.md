@@ -15,3 +15,5 @@ run `make test` to compile and run
 ## sierpinsky-triangle
 Draws a user selected depth sierpinsky triangle to the screen
 
+## hello-triangle
+Draws a simple 1-colour triangle to the screen
