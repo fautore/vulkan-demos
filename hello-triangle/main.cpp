@@ -1,5 +1,5 @@
 // #include <vulkan/vulkan.h> // <-- headless
-#include <map>
+#include <optional>
 #include <vulkan/vulkan_core.h>
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -38,6 +38,33 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
     if (func != nullptr) {
         func(instance, debugMessenger, pAllocator);
     }
+}
+
+struct QueueFamilyIndices {
+    std::optional<uint32_t> graphicsFamily;
+
+    bool isComplete() {
+        return graphicsFamily.has_value();
+    }
+};
+
+QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
+    QueueFamilyIndices indices;
+    uint32_t queueFamilyCount = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+    std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+    int i = 0;
+    for (const auto& queueFamily : queueFamilies) {
+        if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+            indices.graphicsFamily = i;
+        }
+        if (indices.isComplete()) {
+            break;
+        }
+        i++;
+    }
+    return indices;
 }
 
 class HelloTriangleApplication {
@@ -184,15 +211,15 @@ private:
             throw std::runtime_error("failed to find a suitable GPU!");
         }
     }
-
     bool isDeviceSuitable(VkPhysicalDevice device) {
         VkPhysicalDeviceProperties deviceProperties;
         VkPhysicalDeviceFeatures deviceFeatures;
+        QueueFamilyIndices indices = findQueueFamilies(device);
         vkGetPhysicalDeviceProperties(device, &deviceProperties);
         vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 
         return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
-               deviceFeatures.geometryShader;
+               deviceFeatures.geometryShader && indices.graphicsFamily.has_value();
     }
     std::vector<const char*> getRequiredExtensions() {
         uint32_t glfwExtensionCount = 0;
