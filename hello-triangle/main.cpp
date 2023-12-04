@@ -1,8 +1,5 @@
 // #include <vulkan/vulkan.h> // <-- headless
-#include <cstdint>
-#include <cstring>
-#include <ostream>
-#include <vector>
+#include <map>
 #include <vulkan/vulkan_core.h>
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -10,6 +7,10 @@
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
+#include <cstdint>
+#include <cstring>
+#include <ostream>
+#include <vector>
 
 // enable validation layers
 const std::vector<const char*> validationLayers = {
@@ -54,6 +55,7 @@ private:
     GLFWwindow* window;
     VkInstance instance;
     VkDebugUtilsMessengerEXT debugMessenger;
+    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     
     void initWindow () {
         glfwInit();
@@ -106,6 +108,7 @@ private:
     void initVulkan() {
         createInstance();
         setupDebugMessenger();
+        pickPhysicalDevice();
     }
     void mainLoop() {
         while(!glfwWindowShouldClose(window)) {
@@ -158,6 +161,38 @@ private:
         if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
             throw std::runtime_error("failed to set up debug messenger!");
         }
+    }
+    void pickPhysicalDevice() {
+        uint32_t deviceCount = 0;
+        vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+
+        if (deviceCount == 0) {
+            throw std::runtime_error("failed to find GPUs with Vulkan support!");
+        }
+
+        std::vector<VkPhysicalDevice> devices(deviceCount);
+        vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+        for (const auto& device : devices) {
+            if (isDeviceSuitable(device)) {
+                physicalDevice = device;
+                break;
+            }
+        }
+
+        if (physicalDevice == VK_NULL_HANDLE) {
+            throw std::runtime_error("failed to find a suitable GPU!");
+        }
+    }
+
+    bool isDeviceSuitable(VkPhysicalDevice device) {
+        VkPhysicalDeviceProperties deviceProperties;
+        VkPhysicalDeviceFeatures deviceFeatures;
+        vkGetPhysicalDeviceProperties(device, &deviceProperties);
+        vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+        return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
+               deviceFeatures.geometryShader;
     }
     std::vector<const char*> getRequiredExtensions() {
         uint32_t glfwExtensionCount = 0;
