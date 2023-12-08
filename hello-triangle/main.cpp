@@ -111,6 +111,9 @@ private:
         }
     }
     void cleanup() { 
+        for (auto imageView : swapChainImageViews) {
+            vkDestroyImageView(device, imageView, nullptr);
+        }
         vkDestroySwapchainKHR(device, swapChain, nullptr);
         vkDestroyDevice(device, nullptr);
         if (enableValidationLayers) {
@@ -301,7 +304,15 @@ private:
             createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
             createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
 
-            createInfo.subresourceRange
+            createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            createInfo.subresourceRange.baseMipLevel = 0;
+            createInfo.subresourceRange.levelCount = 1;
+            createInfo.subresourceRange.baseArrayLayer = 0;
+            createInfo.subresourceRange.layerCount = 1;
+
+            if (vkCreateImageView(device, &createInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
+                throw std::runtime_error("failed to create image views!");
+            }
         }
     }
     VkSurfaceFormatKHR chooseSwapSurfaceFormat (const std::vector<VkSurfaceFormatKHR> &availableFormats) {
