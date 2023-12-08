@@ -191,8 +191,11 @@ private:
     pipelineConfig.renderPass = lveSwapChain->getRenderPass();
     pipelineConfig.pipelineLayout = pipelineLayout;
     lvePipeline = std::make_unique<LvePipeline>(
-        lveDevice, "shaders/simple_shader.vert.spv",
-        "shaders/simple_shader.frag.spv", pipelineConfig);
+      lveDevice,
+      "bin/shaders/simple_shader.vert.spv",
+      "bin/shaders/simple_shader.frag.spv",
+      pipelineConfig
+    );
   };
 
   void createCommandBuffers() {
