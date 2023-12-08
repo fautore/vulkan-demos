@@ -1,0 +1,6 @@
+.old
+
+# remove compiled files
+bin
+# remove compiled shaders
+shaders/*.spv
