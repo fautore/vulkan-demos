@@ -1,4 +1,5 @@
-# vulkan-sierpinsky
+# vulkan-sierpinsky-2d
+
 An application written in c++ that leverages the power of the Vulkan API to draw a sierpinsky triangle to the screen
 
 ## How to run
