@@ -4,6 +4,8 @@ A collection of little demo programmes that use the Vulkan graphics-API to do co
 # Dependencies
 
 # Demos
+Here is a list of available demos:
+
 - hello-triangle:  Where 'vulkan-tutorial.com' leaves you
 - sierpinsky-triangle-2d: dynamic view of a 2-dimensional sierpinsky triangle with custom user defined depth
 
