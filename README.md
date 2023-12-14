@@ -3,6 +3,7 @@ A collection of little demo programmes that use the Vulkan graphics-API to do co
 
 # Dependencies
 vulkan
+glfw
 
 # Demos
 Here is a list of available demos:
