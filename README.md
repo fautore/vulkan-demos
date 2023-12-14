@@ -2,6 +2,7 @@
 A collection of little demo programmes that use the Vulkan graphics-API to do cool stuff.
 
 # Dependencies
+vulkan
 
 # Demos
 Here is a list of available demos:
