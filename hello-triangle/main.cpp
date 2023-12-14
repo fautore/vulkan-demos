@@ -103,6 +103,7 @@ private:
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
     std::vector<VkImageView> swapChainImageViews;
+    VkPipelineLayout pipelineLayout;
 
     void initWindow () {
         glfwInit();
@@ -126,6 +127,7 @@ private:
         }
     }
     void cleanup() { 
+        vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
         for (auto imageView : swapChainImageViews) {
             vkDestroyImageView(device, imageView, nullptr);
         }
@@ -436,6 +438,17 @@ private:
         colorBlending.blendConstants[1] = 0.0f; // Optional
         colorBlending.blendConstants[2] = 0.0f; // Optional
         colorBlending.blendConstants[3] = 0.0f; // Optional
+        
+        VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+        pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        pipelineLayoutInfo.setLayoutCount = 0; // Optional
+        pipelineLayoutInfo.pSetLayouts = nullptr; // Optional
+        pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
+        pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
+        
+        if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout)!= VK_SUCCESS) {
+            throw std::runtime_error("failed to create pipeline layout!");
+        }
     }
     VkSurfaceFormatKHR chooseSwapSurfaceFormat (const std::vector<VkSurfaceFormatKHR> &availableFormats) {
         for (const auto &availableFormat : availableFormats) {
