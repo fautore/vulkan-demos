@@ -138,6 +138,7 @@ private:
             glfwPollEvents();
             drawFrame();
         }
+        vkDeviceWaitIdle(device);
     }
     void cleanup() { 
         vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
