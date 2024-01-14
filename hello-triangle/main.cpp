@@ -173,6 +173,7 @@ private:
     std::vector<void*> uniformBuffersMapped;
     VkDescriptorPool descriptorPool;
     std::vector<VkDescriptorSet> descriptorSets;
+    uint32_t currentFrame = 0;
 
     void initWindow () {
         glfwInit();
@@ -584,7 +585,7 @@ private:
         rasterizer.rasterizerDiscardEnable = VK_FALSE;
         rasterizer.lineWidth = 1.0f;
         rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-        rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+        rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
         rasterizer.depthBiasConstantFactor = 0.0f; // Optional
         rasterizer.depthBiasClamp = 0.0f; // Optional
@@ -840,6 +841,7 @@ private:
         scissor.extent = swapChainExtent;
         vkCmdSetScissor(commandBuffer, 0, 1, &scissor);            
 
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
         vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
         vkCmdEndRenderPass(commandBuffer);
@@ -896,7 +898,6 @@ private:
         vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
     }
     void drawFrame () {
-        uint32_t currentFrame = 0;
         uint32_t imageIndex;
         vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
         vkResetFences(device, 1, &inFlightFences[currentFrame]);
