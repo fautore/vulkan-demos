@@ -3,3 +3,6 @@
 # remove compiled files
 vulkan-app
 shaders/*.spv
+
+# remove texture files
+textures
