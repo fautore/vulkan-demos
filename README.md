@@ -2,6 +2,7 @@
 A collection of demo programmes that use the Vulkan graphics-API to do cool stuff.
 
 # Dependencies
+- make
 - vulkan
 - glfw
 
