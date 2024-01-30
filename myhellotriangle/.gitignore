@@ -1,0 +1,4 @@
+# ignore binary directory
+bin/*
+# ignore compiled shaders
+shaders/*.spv
