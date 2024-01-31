@@ -12,7 +12,20 @@ const bool enableValidationLayers = false;
 const bool enableValidationLayers = true;
 #endif
 
-VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
+
+VkSurfaceKHR createSurface(VkInstance* instance, GLFWwindow* window) {
+	VkSurfaceKHR surface;
+        if (glfwCreateWindowSurface(*instance, window, nullptr, &surface) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create window surface!");
+        }
+	return surface;
+}
+
+VkResult CreateDebugUtilsMessengerEXT(
+	VkInstance instance,
+	const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+	const VkAllocationCallbacks* pAllocator,
+	VkDebugUtilsMessengerEXT* pDebugMessenger) {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
     if (func != nullptr) {
         return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
@@ -114,23 +127,34 @@ VkDebugUtilsMessengerEXT setupDebugMessenger(VkInstance* instance) {
 	return debugMessenger;
 }
 
-struct vulkan {
-	// enable validation layers
-	const std::vector<const char*> validationLayers = {
-	    "VK_LAYER_KHRONOS_validation"
-	};
-	// device extensions to require
-	const std::vector<const char*> deviceExtensions = {
-	    VK_KHR_SWAPCHAIN_EXTENSION_NAME
-	};
+// enable validation layers
+const std::vector<const char*> validationLayers = {
+    "VK_LAYER_KHRONOS_validation"
+};
+// device extensions to require
+const std::vector<const char*> deviceExtensions = {
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME
+};
 
+struct vulkan {
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
-	vulkan() {	
-		instance = createInstance(this->validationLayers);
-		if (enableValidationLayers) {
+	VkSurfaceKHR surface;
+
+	static vulkan create(GLFWwindow* window) {
+		VkInstance instance = createInstance(validationLayers);
+		VkDebugUtilsMessengerEXT debugMessenger;
+		if (enableValidationLayers) { // not optimal
 			debugMessenger = setupDebugMessenger(&instance);
 		}
-		
+		VkSurfaceKHR surface = createSurface(&instance, window); 
+
+		return vulkan{
+			.instance = instance,
+			.debugMessenger = debugMessenger,
+			.surface = surface
+		};
 	}
 };
+
+
