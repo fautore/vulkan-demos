@@ -20,8 +20,8 @@ VERT_SPIRV := $(patsubst $(shaders_sources_dir)/%.vert, $(shaders_binary_dir)/%.
 FRAG_SPIRV := $(patsubst $(shaders_sources_dir)/%.frag, $(shaders_binary_dir)/%.frag.spv, $(FRAG_SHADERS))
 
 # make executable
-bin/HelloTriangle: main.cpp $(VERT_SPIRV) $(FRAG_SPIRV)
-	@g++ $(CFLAGS) -o bin/HelloTriangle main.cpp $(LDFLAGS)
+bin/MyHelloTriangle: src/main.cpp $(VERT_SPIRV) $(FRAG_SPIRV)
+	@g++ $(CFLAGS) -o bin/MyHelloTriangle src/main.cpp $(LDFLAGS)
 
 .PHONY: test clean
 
