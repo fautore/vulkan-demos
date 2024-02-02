@@ -131,20 +131,18 @@ VkDebugUtilsMessengerEXT setupDebugMessenger(VkInstance* instance) {
 const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"
 };
-// device extensions to require
-const std::vector<const char*> deviceExtensions = {
-    VK_KHR_SWAPCHAIN_EXTENSION_NAME
-};
 
 struct vulkan {
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
 	VkSurfaceKHR surface;
+	VkPhysicalDevice physicalDevice;
+	VkDevice device;
 
 	static vulkan create(GLFWwindow* window) {
 		VkInstance instance = createInstance(validationLayers);
 		VkDebugUtilsMessengerEXT debugMessenger;
-		if (enableValidationLayers) { // not optimal
+		if (enableValidationLayers) { // i don't like this
 			debugMessenger = setupDebugMessenger(&instance);
 		}
 		VkSurfaceKHR surface = createSurface(&instance, window); 
