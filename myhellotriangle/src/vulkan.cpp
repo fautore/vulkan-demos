@@ -6,6 +6,8 @@
 #include <vulkan/vulkan_core.h>
 #include <GLFW/glfw3.h>
 
+# include "physicalDevice.h"
+
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
 #else
@@ -146,6 +148,7 @@ struct vulkan {
 			debugMessenger = setupDebugMessenger(&instance);
 		}
 		VkSurfaceKHR surface = createSurface(&instance, window); 
+		VkPhysicalDevice physicalDevice = selectPhisicalDevice(instance);
 
 		return vulkan{
 			.instance = instance,
