@@ -148,7 +148,7 @@ struct vulkan {
 			debugMessenger = setupDebugMessenger(&instance);
 		}
 		VkSurfaceKHR surface = createSurface(&instance, window); 
-		VkPhysicalDevice physicalDevice = selectPhisicalDevice(instance);
+		VkPhysicalDevice physicalDevice = selectPhysicalDevice(instance);
 
 		return vulkan{
 			.instance = instance,

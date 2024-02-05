@@ -25,8 +25,8 @@ bin/MyHelloTriangle: src/main.cpp $(VERT_SPIRV) $(FRAG_SPIRV)
 
 .PHONY: test clean
 
-test: bin/HelloTriangle
-	bin/HelloTriangle
+test: bin/MyHelloTriangle
+	bin/MyHelloTriangle
 
 clean:
 	rm -f a.out
